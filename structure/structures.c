@@ -5,9 +5,11 @@ typedef struct {
     2 : create account
     3 : delete account
     */
-    int requestt;
+    int action;
     char data[100]
 } request;
+
+#define PORT 2058
 
 typedef struct {
     /*
