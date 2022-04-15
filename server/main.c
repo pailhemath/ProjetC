@@ -1,13 +1,29 @@
+#ifndef TEST_H
 #include <stdio.h>
-//#include <unistd.h>
-//#include <sys/ipc.h>
-//#include <sys/msg.h>
+#include <unistd.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/mman.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <string.h>
+#include <pthread.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <ctype.h>
+
+
+#include "../structure/structures.h"
+
+#define PORT 3490
+#endif
+
 
 // include files
-#include "../structure/structures.c"
 
 
 
@@ -18,7 +34,7 @@
     *  It will receive the request and send it to the server.
     */
    
-void requestManager()
+void *requestManager()
 {
 
     int sock, lg;
@@ -37,7 +53,6 @@ void requestManager()
     if (bind(sock, (struct sockaddr *) &adr_s, sizeof(adr_s)) < 0)
     {
         perror("connect");
-        exit(1);
     }
 
     while (1)
@@ -45,7 +60,7 @@ void requestManager()
         // ATTENTE D'UN MESSAGE
         if (recvfrom(sock, &buffer, sizeof(buffer), 0, (struct sockaddr *) &adr_c, &lg))
         {
-            printf("  --- Before start real REQUEST MANAGER --- Message reçu : %s \n", buf);
+            printf("  --- Before start real REQUEST MANAGER --- Message reçu :");
             // réception du message dans le &buffer
 
             switch (buffer.action)
@@ -75,10 +90,10 @@ void requestManager()
     }
 }
 
+
 int main(int argc, char const *argv[])
 {
+  return 0;
 
-    // on va asummer que le client est connecté
-    //appeler requestmanager en continue
-    return 0;
 }
+
