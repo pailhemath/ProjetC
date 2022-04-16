@@ -7,35 +7,35 @@
 #include "structures.h"
 #include <stdlib.h>
 #include <pthread.h>
+
 #define PORT 3004
 
 int STATE = 0;
+int msgid;
 
 
 //gcc -g -pthread server.c -o server
 
 
-int decodeBuffer( char buffer[100]){
-   
-    if(strcmp(buffer, "-help\n") == 0){
+int decodeBuffer(char buffer[100]) {
+
+    if (strcmp(buffer, "-help\n") == 0) {
         return 999999;
-    }else if(strcmp(buffer, "-create\n") == 0){
+    } else if (strcmp(buffer, "-create\n") == 0) {
         return 999998;
-    }else if(strcmp(buffer, "-delete\n") == 0){
+    } else if (strcmp(buffer, "-delete\n") == 0) {
         return 999997;
-    }else if(strcmp(buffer, "-login\n") == 0){
+    } else if (strcmp(buffer, "-login\n") == 0) {
         return 999996;
-    }else if(strcmp(buffer, "-logout\n") == 0){
+    } else if (strcmp(buffer, "-logout\n") == 0) {
         return 999995;
-    }else if(strcmp(buffer, "-list\n") == 0){
+    } else if (strcmp(buffer, "-list\n") == 0) {
         return 999994;
-    }else if(strcmp(buffer, "-quit\n") == 0){
+    } else if (strcmp(buffer, "-quit\n") == 0) {
         return 999993;
-    }else
+    } else
         return 0;
 }
-
-
 
 
 /*
@@ -44,8 +44,7 @@ int decodeBuffer( char buffer[100]){
     *  This function is used to manage the requests.
     *  It will receive the request and send it to the server.
     */
-void *requestManager()
-{
+void *requestManager() {
 
     int sock, lg, decode;
     struct sockaddr_in adr_s, adr_c;
@@ -61,64 +60,100 @@ void *requestManager()
     adr_s.sin_addr.s_addr = htonl(INADDR_ANY);
 
     //attach socket to the server
-    if (bind(sock, (struct sockaddr *) &adr_s, sizeof(adr_s)) < 0)
-    {
+    if (bind(sock, (struct sockaddr *) &adr_s, sizeof(adr_s)) < 0) {
         perror("connect");
     }
 
-    while (STATE == 0)
-    {
+    while (STATE == 0) {
         // ATTENTE D'UN MESSAGE
-        if (recvfrom(sock, &buffer, sizeof(buffer), 0, (struct sockaddr *) &adr_c, &lg))
-        {
+        if (recvfrom(sock, &buffer, sizeof(buffer), 0, (struct sockaddr *) &adr_c, &lg)) {
             //printf("  --- Before start real REQUEST MANAGER --- Message reçu :");
             // réception du message dans le &buffer
             //printf(" \n------------\n %s\n------------\n", buffer);
             //int message = atoi(buffer);
             //transforme buffer to string
             decode = decodeBuffer(buffer);
-            switch (decode)
-            {
+            switch (decode) {
 
-            case 999996:
-                printf("REQUEST-MANAGER Connexion de l'utilisation \n");
-                // log in
-                break;
-            case 999993:
-                printf("REQUEST-MANAGER Déconnexion de l'utilisation \n");
-                // log out
-                break;
-            case 999998:
-                printf("REQUEST-MANAGER Création d'un compte \n");
-                // create account
-                break;
-            case 999997:
-                printf("REQUEST-MANAGER Suppression d'un compte \n");
-                // delete account
-                break;
-            case 999994:
-                printf("REQUEST-MANAGER Liste des comptes \n");
-                // list accounts
-                break;
-            case 0:
-                printf("REQUEST-MANAGER Action inconnue \n");
-                //do nothing
-                //STATE = 1;
-                break;
-            default:
-                printf("REQUEST-MANAGER IL Y A UN GROS PROBLEME \n");
-                //do nothing
-                //STATE = 1;
-                break;
+                case 999996:
+                    printf("REQUEST-MANAGER Connexion de l'utilisation \n");
+                    // log in
+                    break;
+                case 999993:
+                    printf("REQUEST-MANAGER Déconnexion de l'utilisation \n");
+                    // log out
+                    break;
+                case 999998:
+                    printf("REQUEST-MANAGER Création d'un compte \n");
+                    // create account
+                    break;
+                case 999997:
+                    printf("REQUEST-MANAGER Suppression d'un compte \n");
+                    // delete account
+                    break;
+                case 999994:
+                    printf("REQUEST-MANAGER Liste des comptes \n");
+                    // list accounts
+                    break;
+                case 0:
+                    printf("REQUEST-MANAGER Action inconnue \n");
+                    //do nothing
+                    //STATE = 1;
+                    break;
+                default:
+                    printf("REQUEST-MANAGER IL Y A UN GROS PROBLEME \n");
+                    //do nothing
+                    //STATE = 1;
+                    break;
             }
         }
     }
 }
 
+void fin(int n) {
+    fprintf(stderr, "Terminaison du serveur.\n");
+    msgctl(msgid, IPC_RMID, NULL);
+    exit(EXIT_SUCCESS);
+}
 
+int RecuFileMessage() {
+    key_t cle;
+    struct sigaction action;
+    requete req;
+    reponse rep;
+    int sig, i;
 
-int main()
-{
+    // on commence par prevoir la terminaison sur signal du serveur
+    action.sa_handler = fin;
+    for (i = 1; i < NSIG; i++) sigaction(i, &action, NULL);    // installation du handler de fin pour tous les signaux
+    // creation de la file de message
+    if ((cle = ftok(SERVEUR, '0')) == -1) {
+        fprintf(stderr, "Obtention de la cle impossible. Fin du serveur.\n");
+        exit(EXIT_FAILURE);
+    }
+    if ((msgid = msgget(cle, IPC_CREAT | IPC_EXCL | DROITS)) == -1) {
+        fprintf(stderr, "Creation de la file impossible. Fin du serveur.\n");
+        exit(EXIT_FAILURE);
+    }
+    // attente d'une requete a l'infini...
+    while (1) {
+        if (msgrcv(msgid, &req, TAILLE_REQ, 1L, 0) == -1) {
+            fprintf(stderr, "Serveur: Erreur de reception de requete\n");
+            continue;
+        }
+        printf("Serveur: requete ->%s<- du processus %d\n", req.chaine, req.signature);
+        // construction de la reponse
+        rep.type = req.signature;
+        // envoi de la reponse
+        if (msgsnd(msgid, &rep, TAILLE_REP, 0) == -1) {
+            fprintf(stderr, "Serveur: Erreur d'envoi d'une réponse a %d\n", req.signature);
+        } else {
+            printf("Serveur: reponse envoyee a %d\n", req.signature);
+        }
+    }
+}
+
+int main() {
     // create a thread
     pthread_t t1;
 
