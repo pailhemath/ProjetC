@@ -22,7 +22,7 @@ void printHelp() {
 
 int EnvoieFileMessage() {
     key_t cle;
-    int msgid, i;
+    int msgid, i, shmid = -1;;
     requete req;
     reponse rep;
     // On recherche la file de message
@@ -65,7 +65,13 @@ int EnvoieFileMessage() {
             case 999996:
                 printf("REQUEST-MANAGER Connexion de l'utilisation \n");
                 // log in
-                int shmid = connexion();
+
+                if( shmid ==-1 ){
+                    shmid = connexion();
+                }
+                else{
+                    printf("vous êtes déjà connecté.\n");
+                }
                 break;
             case 999993:
                 printf("REQUEST-MANAGER Déconnexion de l'utilisation \n");
