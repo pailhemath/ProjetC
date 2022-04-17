@@ -36,7 +36,7 @@ int msgid;
     *  This function is used to manage the requests.
     *  It will receive the request and send it to the server.
     */
-void *requestManager() {
+/*void *requestManager() {
 
     int sock, lg, decode;
     struct sockaddr_in adr_s, adr_c;
@@ -100,7 +100,7 @@ void *requestManager() {
             }
         }
     }
-}
+}*/
 
 void fin(int n) {
     fprintf(stderr, "Terminaison du serveur.\n");
@@ -108,7 +108,7 @@ void fin(int n) {
     exit(EXIT_SUCCESS);
 }
 
-int RecuFileMessage() {
+void *requestManager() {
     key_t cle;
     struct sigaction action;
     requete req;
@@ -137,7 +137,6 @@ int RecuFileMessage() {
         // construction de la reponse
         rep.type = req.signature;
         tmp = strlen(req.chaine);
-        printf("Serveur: tmp=%d\n", tmp);
         for(i=0; i<tmp; i++) {
             rep.chaine[i] = req.chaine[i];
         }
@@ -155,13 +154,12 @@ int RecuFileMessage() {
 
 int main() {
     // create a thread
-   //pthread_t t1;
+   pthread_t t1;
 
 
     //call a thread
-   // pthread_create(&t1, NULL, &requestManager, NULL /* args*/ );
-   // pthread_join(t1, NULL /* get result from thread */ );
+    pthread_create(&t1, NULL, &requestManager, NULL /* args*/ );
+    pthread_join(t1, NULL /* get result from thread */ );
 
    // return 0;
-   RecuFileMessage();
 }

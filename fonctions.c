@@ -107,19 +107,19 @@ void connexion(){
 
 int decodeBuffer( char buffer[100]){
    
-    if(strcmp(buffer, "-help\n") == 0){
+    if(strcmp(buffer, "-help") == 0){
         return 999999;
-    }else if(strcmp(buffer, "-create\n") == 0){
+    }else if(strcmp(buffer, "-create") == 0){
         return 999998;
-    }else if(strcmp(buffer, "-delete\n") == 0){
+    }else if(strcmp(buffer, "-delete") == 0){
         return 999997;
     }else if(strcmp(buffer, "-login") == 0){
         return 999996;
-    }else if(strcmp(buffer, "-logout\n") == 0){
+    }else if(strcmp(buffer, "-logout") == 0){
         return 999995;
-    }else if(strcmp(buffer, "-list\n") == 0){
+    }else if(strcmp(buffer, "-list") == 0){
         return 999994;
-    }else if(strcmp(buffer, "-quit\n") == 0){
+    }else if(strcmp(buffer, "-quit") == 0){
         return 999993;
     }else
         return 0;
