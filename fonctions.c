@@ -14,9 +14,59 @@ char mdp[100];
 #define CLE 217
 
 
+int connexion(FILE* fichier){
+    char buf[100];
+    char bufmdp[100];
+    int cmp = 1;
+    int cmpmdp = 1;
+    int cont = 1;
+    int i = 1;
+    int tmp;
+
+    printf("Entrez votre pseudo :\n");
+    scanf("%s", pseudo);
+    printf("Entrez votre mot de passe :\n");
+    scanf("%s", mdp);
+
+    while (fgets(buf,30,fichier) != NULL)
+    {
+        char *p = strchr(buf, '\n');
+        if (p != NULL)
+        {
+            *p = 0;
+        }
+        if (strcmp(buf, pseudo) == 0)
+        {
+            cmp = 0;
+            tmp = cont;
+        }
+        if((cont == tmp+1)&&(strcmp(buf, mdp) == 0)){
+            cmpmdp = 0;
+            break;
+        }
+        cont += 1;
+    }
+
+    if (cmp == 0 && cmpmdp == 0){
+        printf("Vous êtes connecté !\n");
 
 
-void connexion(){
+        while ((shmget(i, 0, 0)) != -1){
+            i += 1;
+        }
+        shmid = shmget (i, 1000, IPC_CREAT|0660);
+        mem = shmat(shmid, NULL, 0);
+        strcpy(mem, pseudo);
+
+    }
+    else {
+        printf("Vous n'êtes pas connecté !\n");
+    }
+    return shmid;
+
+}
+
+/*void connexion(){
     char buf[100];
     char bufmdp[100];
     int cmp = 1;
@@ -66,7 +116,7 @@ void connexion(){
         printf("%s\n", mdp);*/
 
 
-     while (fgets(buf,30,fichier) != NULL)
+ /*    while (fgets(buf,30,fichier) != NULL)
     {
         char *p = strchr(buf, '\n');
         if (p != NULL)
@@ -97,12 +147,12 @@ void connexion(){
         /*shmid = shmget((key_t)CLE, 0, 0);
         mem = shmat(shmid, NULL, 0);
         printf("Pseudo : %s\n", mem);*/
-    }
+    /*}
     else {
         printf("Vous n'êtes pas connecté !\n");
     }
     fclose(fichier);
-}
+} */
 
 
 int decodeBuffer( char buffer[100]){

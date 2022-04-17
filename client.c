@@ -65,7 +65,7 @@ int EnvoieFileMessage() {
             case 999996:
                 printf("REQUEST-MANAGER Connexion de l'utilisation \n");
                 // log in
-                connexion();
+                int shmid = connexion();
                 break;
             case 999993:
                 printf("REQUEST-MANAGER Déconnexion de l'utilisation \n");
@@ -74,6 +74,7 @@ int EnvoieFileMessage() {
             case 999998:
                 printf("REQUEST-MANAGER Création d'un compte \n");
                 // create account
+                inscription();
                 break;
             case 999997:
                 printf("REQUEST-MANAGER Suppression d'un compte \n");
