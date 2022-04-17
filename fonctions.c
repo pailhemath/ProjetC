@@ -95,14 +95,12 @@ int connexion() {
 
     if (cmp == 0 && cmpmdp == 0) {
         printf("Vous êtes connecté !\n");
-        while ((shmget(i,0, 0)) != -1) {
+        while ((shmget(i, 0, 0)) != -1){
             i += 1;
         }
-        key_t clef ;
-        clef = ftok("fonction.c",(key_t) i);
-        shmid = shmget(clef, 1000, IPC_CREAT | IPC_EXCL|SHM_R|SHM_W);
-        strcpy(mem, pseudo);
+        shmid = shmget (i, 1000, IPC_CREAT|0660);
         mem = shmat(shmid, NULL, 0);
+        strcpy(mem, pseudo);
     } else {
         printf("Vous n'êtes pas connecté !\n");
     }
@@ -251,13 +249,12 @@ void lecture(int i){
     }
 }
 
-int deconnexion(int shmid){
+void deconnexion(int shmid){
     {
         if (shmctl(shmid,IPC_RMID,NULL) == -1)
         {
             perror("Erreur lors de la destruction") ;
             exit(1) ;
         }
-        return shmid;
     }
 }
