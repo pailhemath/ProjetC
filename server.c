@@ -155,12 +155,13 @@ int RecuFileMessage() {
 
 int main() {
     // create a thread
-    pthread_t t1;
+   //pthread_t t1;
 
 
     //call a thread
-    pthread_create(&t1, NULL, &requestManager, NULL /* args*/ );
-    pthread_join(t1, NULL /* get result from thread */ );
+   // pthread_create(&t1, NULL, &requestManager, NULL /* args*/ );
+   // pthread_join(t1, NULL /* get result from thread */ );
 
-    return 0;
+   // return 0;
+   RecuFileMessage();
 }

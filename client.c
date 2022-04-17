@@ -62,7 +62,7 @@ int EnvoieFileMessage() {
 }
 
 int main() { // client
-    int sock;
+    /*int sock;
     char buf[50];
     struct sockaddr_in adr_s, adr_c;
     sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP); // Creation socket
@@ -76,7 +76,7 @@ int main() { // client
     adr_s.sin_port = htons(PORT);
     adr_s.sin_addr.s_addr = htonl(INADDR_ANY);
     /* Establish the connection */
-    if ((connect(sock, (struct sockaddr *) &adr_s, sizeof(adr_s))) == -1) {
+   /* if ((connect(sock, (struct sockaddr *) &adr_s, sizeof(adr_s))) == -1) {
         perror("Connection to socket failed");
 
     } else {
@@ -93,6 +93,7 @@ int main() { // client
                 sendto(sock, buf, 20, 0, (struct sockaddr *) &adr_s, sizeof(adr_s));
         }
 
-    }
+    }*/
     //close(sock);
+    EnvoieFileMessage();
 }

@@ -10,7 +10,7 @@
 
 #define DROITS 0640
 #define NB_CHAR 1024
-#define SERVEUR "./serveur"
+#define SERVEUR "./server"
 #define TAILLE_REQ (NB_CHAR+sizeof(int))
 #define TAILLE_REP (NB_CHAR)
 
