@@ -76,6 +76,9 @@ int EnvoieFileMessage() {
                     printf("vous êtes déjà connecté.\n");
                 }
                 break;
+            case 999999:
+                printHelp();
+                break;
             case 999995:
                 printf("REQUEST-MANAGER Déconnexion de l'utilisation \n");
                 // log out

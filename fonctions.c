@@ -9,16 +9,17 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <gtk/gtk.h>
 
 #define FILENAME_SIZE 1024
 #define MAX_LINE 2048
 
 
-//void end_program (GtkWidget *wid, gpointer ptr);
+void end_program (GtkWidget *wid, gpointer ptr);
 
 
-//GtkWidget *txt;
-//GtkWidget *txt2;
+GtkWidget *txt;
+GtkWidget *txt2;
 char pseudo[100];
 char mdp[100];
 char *mem;
@@ -37,22 +38,22 @@ int connexion() {
     FILE *fichier = NULL;
     fichier = fopen("liste.txt", "r+");
 
-    /* void copy_text (GtkWidget *wid, gpointer ptr)
+    void copy_text (GtkWidget *wid, gpointer ptr)
  {
      strcpy(pseudo,gtk_entry_get_text(GTK_ENTRY(txt)));
      strcpy(mdp,gtk_entry_get_text(GTK_ENTRY(txt2)));
      end_program(wid, ptr);
       gtk_widget_destroy(wid);
 
- }*/
-    printf("Entrez votre pseudo :\n");
+ }
+   /* printf("Entrez votre pseudo :\n");
     scanf("%s", pseudo);
     printf("Entrez votre mot de passe :\n");
-    scanf("%s", mdp);
+    scanf("%s", mdp);*/
 //print pseudo and mdp
 
 
-/* gtk_init (NULL, NULL);
+gtk_init (NULL, NULL);
  GtkWidget *win = gtk_window_new (GTK_WINDOW_TOPLEVEL);
  g_signal_connect (win, "delete_event", G_CALLBACK (end_program),NULL);
  GtkWidget *lbl = gtk_label_new ("username :");
@@ -74,7 +75,7 @@ int connexion() {
  gtk_main ();
 
      printf("%s\n", pseudo);
-     printf("%s\n", mdp);*/
+     printf("%s\n", mdp);
 
 
     while (fgets(buf,30, fichier) != NULL) {
@@ -196,11 +197,11 @@ void desinscription(){
 }
 
 
-/* void end_program (GtkWidget *wid, gpointer ptr)
+void end_program (GtkWidget *wid, gpointer ptr)
  {
      gtk_main_quit ();
  }
-*/
+
 void inscription() {
     char pseudo[100];
     char buf[100];
