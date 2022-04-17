@@ -11,13 +11,16 @@
 
 void printHelp() {
     printf("Bienvenue dans le programme de gestion de compte.\n");
+    printf("---------------------------------------------------\n");
     printf(" -help : Affiche l'aide\n");
     printf(" -create : Crée un compte\n");
     printf(" -delete : Supprime un compte\n");
     printf(" -login : Se connecte\n");
     printf(" -logout : Se déconnecte\n");
     printf(" -list : Affiche la liste des comptes connectés\n");
+    printf(" -disc : se déconnecter\n");
     printf(" -quit : Quitte le programme\n");
+    printf("---------------------------------------------------\n");
 }
 
 int EnvoieFileMessage() {
@@ -47,7 +50,7 @@ int EnvoieFileMessage() {
             printf("Au revoir !\n");
             exit(EXIT_SUCCESS);
         }
-        printf("Requete de %d envoyee: ->%s<-\n", req.signature, req.chaine);
+        //printf("Requete de %d envoyee: ->%s<-\n", req.signature, req.chaine);
         if (msgsnd(msgid, &req, TAILLE_REQ, 0) == -1) {
             fprintf(stderr, "%d: erreur d'envoi de la requete %s au serveur\n", req.signature, req.chaine);
             fprintf(stderr, "Fin du client %d.\n", req.signature);
@@ -58,7 +61,7 @@ int EnvoieFileMessage() {
             fprintf(stderr, "Fin du client %d.\n", req.signature);
             exit(EXIT_FAILURE);
         }
-        printf("%d: reponse du serveur ->%s<-\n", req.signature, rep.chaine);
+        //printf("%d: reponse du serveur ->%s<-\n", req.signature, rep.chaine);
         int decode = decodeBuffer(rep.chaine);
         switch (decode) {
 
@@ -73,9 +76,17 @@ int EnvoieFileMessage() {
                     printf("vous êtes déjà connecté.\n");
                 }
                 break;
-            case 999993:
+            case 999995:
                 printf("REQUEST-MANAGER Déconnexion de l'utilisation \n");
                 // log out
+                if (shmid == -1){
+                    printf("vous êtes déjà déconnecté\n");
+                }
+                else{
+                    deconnexion(shmid);
+                    printf("vous êtes déconnecté\n");
+                    shmid = -1;
+                }
                 break;
             case 999998:
                 printf("REQUEST-MANAGER Création d'un compte \n");
@@ -89,7 +100,9 @@ int EnvoieFileMessage() {
             case 999994:
                 printf("REQUEST-MANAGER Liste des comptes \n");
                 // list accounts
+                lecture(1);
                 break;
+
             case 0:
                 printf("REQUEST-MANAGER Action inconnue \n");
                 //do nothing

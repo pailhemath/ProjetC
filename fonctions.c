@@ -98,9 +98,11 @@ int connexion() {
         while ((shmget(i,0, 0)) != -1) {
             i += 1;
         }
-        shmid = shmget(i, 1000, IPC_CREAT | 0660);
-        mem = shmat(shmid, NULL, 0);
+        key_t clef ;
+        clef = ftok("fonction.c",(key_t) i);
+        shmid = shmget(clef, 1000, IPC_CREAT | IPC_EXCL|SHM_R|SHM_W);
         strcpy(mem, pseudo);
+        mem = shmat(shmid, NULL, 0);
     } else {
         printf("Vous n'êtes pas connecté !\n");
     }
@@ -125,8 +127,11 @@ int decodeBuffer(char buffer[100]) {
         return 999994;
     } else if (strcmp(buffer, "-quit") == 0) {
         return 999993;
-    } else
+    } else if (strcmp(buffer, "-disc") == 0) {
+        return 999991;
+    } else {
         return 0;
+    }
 }
 
 
@@ -231,12 +236,28 @@ void inscription() {
     fclose(fichier);
 
 }
-/*
-void fin(int n) {
-    int msgid;
-    fprintf(stderr, "Terminaison du serveur.\n");
-    msgctl(msgid, IPC_RMID, NULL);
-    exit(EXIT_SUCCESS);
+void lecture(int i){
+    if (shmget(i, 0, 0) == -1)
+    {
+        printf("---------------------------\n");
+        printf("Lecture fini\n") ;
+    }
+    else{
+        shmid = shmget(i, 0, 0);
+        mem = shmat(shmid, NULL, 0);
+        printf("Pseudo : %s, shmid : %d \n", mem, shmid);
+        i = i + 1;
+        lecture(i);
+    }
 }
 
-*/
+int deconnexion(int shmid){
+    {
+        if (shmctl(shmid,IPC_RMID,NULL) == -1)
+        {
+            perror("Erreur lors de la destruction") ;
+            exit(1) ;
+        }
+        return shmid;
+    }
+}
