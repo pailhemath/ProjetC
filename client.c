@@ -16,7 +16,7 @@ void printHelp() {
     printf(" -delete : Supprime un compte\n");
     printf(" -login : Se connecte\n");
     printf(" -logout : Se déconnecte\n");
-    printf(" -list : Affiche la liste des comptes\n");
+    printf(" -list : Affiche la liste des comptes connectés\n");
     printf(" -quit : Quitte le programme\n");
 }
 
