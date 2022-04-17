@@ -33,6 +33,7 @@ int connexion() {
     int cmpmdp = 1;
     int cont = 1;
     int tmp;
+    int i =1;
     FILE *fichier = NULL;
     fichier = fopen("liste.txt", "r+");
 
@@ -133,7 +134,7 @@ int decodeBuffer(char buffer[100]) {
 }
 
 
-/*
+
 void desinscription(){
     FILE* fichier = NULL;
     fichier = fopen("liste.txt", "r+");
@@ -193,7 +194,7 @@ void desinscription(){
     rename(temp_filename,"liste.txt");
 
 }
-*/
+
 
 /* void end_program (GtkWidget *wid, gpointer ptr)
  {

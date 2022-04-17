@@ -96,6 +96,7 @@ int EnvoieFileMessage() {
             case 999997:
                 printf("REQUEST-MANAGER Suppression d'un compte \n");
                 // delete account
+                desinscription();
                 break;
             case 999994:
                 printf("REQUEST-MANAGER Liste des comptes \n");

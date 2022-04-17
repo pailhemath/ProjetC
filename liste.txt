@@ -6,5 +6,3 @@ val
 456
 fdl
 789
-erwan
-123
