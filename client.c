@@ -5,6 +5,7 @@
 #include <netdb.h>
 #include <string.h>
 #include "structures.h"
+#include "fonctions.c"
 
 #define PORT 3004
 
@@ -58,11 +59,46 @@ int EnvoieFileMessage() {
             exit(EXIT_FAILURE);
         }
         printf("%d: reponse du serveur ->%s<-\n", req.signature, rep.chaine);
+        int decode = decodeBuffer(rep.chaine);
+        switch (decode) {
+
+            case 999996:
+                printf("REQUEST-MANAGER Connexion de l'utilisation \n");
+                // log in
+                connexion();
+                break;
+            case 999993:
+                printf("REQUEST-MANAGER Déconnexion de l'utilisation \n");
+                // log out
+                break;
+            case 999998:
+                printf("REQUEST-MANAGER Création d'un compte \n");
+                // create account
+                break;
+            case 999997:
+                printf("REQUEST-MANAGER Suppression d'un compte \n");
+                // delete account
+                break;
+            case 999994:
+                printf("REQUEST-MANAGER Liste des comptes \n");
+                // list accounts
+                break;
+            case 0:
+                printf("REQUEST-MANAGER Action inconnue \n");
+                //do nothing
+                //STATE = 1;
+                break;
+            default:
+                printf("REQUEST-MANAGER IL Y A UN GROS PROBLEME \n");
+                //do nothing
+                //STATE = 1;
+                break;
+        }
     }
 }
 
 int main() { // client
-    /*int sock;
+    int sock;
     char buf[50];
     struct sockaddr_in adr_s, adr_c;
     sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP); // Creation socket
@@ -75,25 +111,14 @@ int main() { // client
     adr_s.sin_family = AF_INET;
     adr_s.sin_port = htons(PORT);
     adr_s.sin_addr.s_addr = htonl(INADDR_ANY);
-    /* Establish the connection */
-   /* if ((connect(sock, (struct sockaddr *) &adr_s, sizeof(adr_s))) == -1) {
+    // Establish the connection
+   if ((connect(sock, (struct sockaddr *) &adr_s, sizeof(adr_s))) == -1) {
         perror("Connection to socket failed");
 
     } else {
         printHelp();
     }
 
-    while (1) {
-        //if user press enter
-        if (fgets(buf, 20, stdin) != NULL) {
-            //if buff == "-help
-            if (strcmp(buf, "-help\n") == 0) {
-                printHelp();
-            } else
-                sendto(sock, buf, 20, 0, (struct sockaddr *) &adr_s, sizeof(adr_s));
-        }
-
-    }*/
     //close(sock);
     EnvoieFileMessage();
 }

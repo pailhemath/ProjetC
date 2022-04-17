@@ -7,6 +7,18 @@
 #include "structures.h"
 #include <stdlib.h>
 #include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <unistd.h>
+#include <stdbool.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+
+#include "fonctions.c"
 
 #define PORT 3004
 
@@ -16,26 +28,6 @@ int msgid;
 
 //gcc -g -pthread server.c -o server
 
-
-int decodeBuffer(char buffer[100]) {
-
-    if (strcmp(buffer, "-help\n") == 0) {
-        return 999999;
-    } else if (strcmp(buffer, "-create\n") == 0) {
-        return 999998;
-    } else if (strcmp(buffer, "-delete\n") == 0) {
-        return 999997;
-    } else if (strcmp(buffer, "-login\n") == 0) {
-        return 999996;
-    } else if (strcmp(buffer, "-logout\n") == 0) {
-        return 999995;
-    } else if (strcmp(buffer, "-list\n") == 0) {
-        return 999994;
-    } else if (strcmp(buffer, "-quit\n") == 0) {
-        return 999993;
-    } else
-        return 0;
-}
 
 
 /*
@@ -121,22 +113,22 @@ int RecuFileMessage() {
     struct sigaction action;
     requete req;
     reponse rep;
-    int sig, i;
+    int sig, i, tmp;
 
     // on commence par prevoir la terminaison sur signal du serveur
     action.sa_handler = fin;
-    for (i = 1; i < NSIG; i++) sigaction(i, &action, NULL);    // installation du handler de fin pour tous les signaux
+    for(i=1; i<NSIG; i++) sigaction(i, &action, NULL);	// installation du handler de fin pour tous les signaux
     // creation de la file de message
     if ((cle = ftok(SERVEUR, '0')) == -1) {
         fprintf(stderr, "Obtention de la cle impossible. Fin du serveur.\n");
         exit(EXIT_FAILURE);
     }
-    if ((msgid = msgget(cle, IPC_CREAT | IPC_EXCL | DROITS)) == -1) {
+    if ((msgid = msgget(cle, IPC_CREAT|IPC_EXCL|DROITS)) == -1) {
         fprintf(stderr, "Creation de la file impossible. Fin du serveur.\n");
         exit(EXIT_FAILURE);
     }
     // attente d'une requete a l'infini...
-    while (1) {
+    while(1) {
         if (msgrcv(msgid, &req, TAILLE_REQ, 1L, 0) == -1) {
             fprintf(stderr, "Serveur: Erreur de reception de requete\n");
             continue;
@@ -144,10 +136,18 @@ int RecuFileMessage() {
         printf("Serveur: requete ->%s<- du processus %d\n", req.chaine, req.signature);
         // construction de la reponse
         rep.type = req.signature;
+        tmp = strlen(req.chaine);
+        printf("Serveur: tmp=%d\n", tmp);
+        for(i=0; i<tmp; i++) {
+            rep.chaine[i] = req.chaine[i];
+        }
+        rep.chaine[tmp] = '\0';
+        printf("Serveur: rep.chaine ->%s<-\n", rep.chaine);
         // envoi de la reponse
         if (msgsnd(msgid, &rep, TAILLE_REP, 0) == -1) {
             fprintf(stderr, "Serveur: Erreur d'envoi d'une réponse a %d\n", req.signature);
-        } else {
+        }
+        else {
             printf("Serveur: reponse envoyee a %d\n", req.signature);
         }
     }
