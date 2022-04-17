@@ -1,4 +1,14 @@
 #include "fonctions.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <unistd.h>
+#include <stdbool.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
 
 #define FILENAME_SIZE 1024
 #define MAX_LINE 2048
